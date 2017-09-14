@@ -1,6 +1,6 @@
 /* TAD para implementacao de funcoes de busca em grafos */
 /*Comenta uma ou outra para escolher entre um grafo com dinamico ou estatico */
-#include "Grafos - Lista adjacencia.h"
+#include "Grafos_Lista_adjacencia.h"
 //#include "Grafos - Matriz adjacencia.h"
 
 /* DEFINES */
