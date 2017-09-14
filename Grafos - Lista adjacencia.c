@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "Grafos - Lista adjacencia.h"
+#include "Grafos_Lista_adjacencia.h"
 
 /* Descricao das funcoes utilizadas */
 void inicializaGrafo(tgrafo *grafo, int num_vertices)
 {
+    int i;
 	if(num_vertices > MAXNUMVERTICES)
 	{
 		printf("Erro: numero de vertices supera o maximo!\n");
@@ -14,9 +15,10 @@ void inicializaGrafo(tgrafo *grafo, int num_vertices)
 	{
 		grafo->num_vertices = num_vertices;
 
-		for (int i = 0; i < num_vertices; i++)
+		for (i = 0; i < num_vertices; i++)
 		{
-			grafo->vet[i] = (taresta*)malloc(sizeof(taresta));
+
+			grafo->vet[i] = (tvertice*)malloc(sizeof(tvertice));                    //controi o vetor de vertices com suas informacoes
 
 			if(!grafo->vet[i])
 			{
@@ -25,18 +27,15 @@ void inicializaGrafo(tgrafo *grafo, int num_vertices)
 			}
 			else
 			{
-				/* Aqui decidi que os vertices comecariam em 0, nao em 1. Se isto
-				 * for trocado, precisamos trocar todo o resto do codigo na parte
-				 * de acesso */
-				grafo->vet[i]->vertice = i;
-				grafo->vet[i]->peso = 1;
+				//Vertices com inicio em 0
+				grafo->vet[i]->id= i;
 				grafo->vet[i]->prox = NULO;
 			}
 		}
 	}
 }
 
-void insere_aresta(tgrafo *grafo, tvertice v, tvertice u, tpeso peso)
+void insere_aresta(tgrafo *grafo, svertice v, svertice u, tpeso peso)
 {
 	taresta* new = (taresta*)malloc(sizeof(taresta));
 
@@ -47,29 +46,37 @@ void insere_aresta(tgrafo *grafo, tvertice v, tvertice u, tpeso peso)
 	}
 	else
 	{
+	    //Insercao dos elementos no bloco novo
 		tapontador aux = grafo->vet[v]->prox;
 		new->peso = peso;
-		new->vertice = u;
+		new->id = u;
 		new->prox = aux;
 		grafo->vet[v]->prox = new;
 	}
 }
 
-void retira_aresta(tgrafo *grafo, tvertice v, tvertice u)
+void retira_aresta(tgrafo *grafo, svertice v, svertice u)
 {
-	/* Aqui vou precisar de dois ponteiros para poder organizar os ponteiros da
-	 * aresta quando exclui-la */
+	/*Aqui vou precisar de dois ponteiros para poder organizar os ponteiros da
+	 aresta quando exclui-la*/
 	tapontador aux = grafo->vet[v]->prox;
-	tapontador aux2 = grafo->vet[v];
 
-	while(aux != NULO)
+	if(aux->id == u){                       //se o procurado for o primeiro elemento da lista
+        grafo->vet[v]->prox = aux->prox;
+        free(aux);
+        return;
+	}
+
+	tapontador aux2 = aux->prox;
+
+	while(aux2 != NULO)
 	{
-		if(aux->vertice == u)
+		if(aux2->id == u)
 			break;
 		else
 		{
-			aux2 = aux;
-			aux = aux->prox;
+			aux = aux2;
+			aux2 = aux2->prox;
 		}
 	}
 
@@ -81,42 +88,50 @@ void retira_aresta(tgrafo *grafo, tvertice v, tvertice u)
 
 	else
 	{
-		aux2->prox = aux->prox;
-		aux->prox = NULO;
-		free(aux);
+		aux->prox = aux2->prox;
+		free(aux2);
 	}
 }
 
-int existe_aresta(tgrafo *grafo, tvertice v, tvertice u)
+int existe_aresta(tgrafo *grafo, svertice v, svertice u)
 {
 	tapontador aux = grafo->vet[v]->prox;
-
+    if(aux == NULO)
+    {
+        return 0;
+    }
 	while(aux->prox != NULO)
 	{
-		if(aux->vertice == u)
-			return 1;
-		else
-			return 0;
+		if(aux->id == u)
+        {
+            return 1;
+		}
+        aux = aux->prox;
 	}
+	return 0;
 }
 
 void libera_grafo(tgrafo *grafo)
 {
-	tapontador aux, aux2;
-	for (int i = 0; i < grafo->num_vertices; i++)
+    int i;
+    tapontador_vertice aux;
+	tapontador aux2, aux3;
+	for (i= 0; i < grafo->num_vertices; i++)
 	{
 		aux = grafo->vet[i];
 		aux2 = grafo->vet[i]->prox;
+		aux3 = aux2->prox;
 		while(aux2 != NULO)
 		{
-			free(aux);
-			aux = aux2;
-			aux2 = aux2->prox;
+			free(aux2);
+			aux2 = aux3;
+			aux3 = aux3->prox;
 		}
+		free(aux);
 	}
 }
 
-int existe_adj(tgrafo *grafo, tvertice v)
+int existe_adj(tgrafo *grafo, svertice v)
 {
 	if(!grafo->vet[v]->prox)
 		return 1;
@@ -124,7 +139,7 @@ int existe_adj(tgrafo *grafo, tvertice v)
 		return 0;
 }
 
-tapontador primeiro_adj(tgrafo *grafo, tvertice v)
+tapontador primeiro_adj(tgrafo *grafo, svertice v)
 {
 	if(existe_adj(grafo, v))
 		return grafo->vet[v]->prox;
@@ -132,7 +147,31 @@ tapontador primeiro_adj(tgrafo *grafo, tvertice v)
 		return NULO;
 }
 
-tapontador prox_adj(tgrafo *grafo, tvertice v)
+tapontador prox_adj(tgrafo *grafo, svertice v)
 {
 	return grafo->vet[v]->prox;
+}
+
+void insere_egressos(tgrafo *grafo,svertice v,int egressos)
+{
+    grafo->vet[v]->egressos = egressos;
+}
+
+void printaGrafo(tgrafo *grafo,int num_vertices)
+{
+    int i;
+    tapontador aux;
+    tapontador_vertice aux2;
+    for(i = 0; i < num_vertices; i++)
+    {
+            aux2 = grafo->vet[i];
+            printf(" Cidades conectadas com %d de %d habitantes: ", aux2->id, aux2->egressos);
+            aux = aux2->prox;
+            while(aux != NULL)
+            {
+                    printf("(Peso: %f  Cidade: %d   )  ", aux->peso, aux->id);
+                    aux = aux->prox;
+            }
+            printf("\n");
+    }
 }
