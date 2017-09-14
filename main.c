@@ -29,5 +29,7 @@ int main()
     }
 
     printaGrafo(&Grafo, n_cidades);
+
+    printf("\nCidade Central: %d", Floydinho(&Grafo));
     return 0;
 }

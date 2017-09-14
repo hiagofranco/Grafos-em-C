@@ -2,11 +2,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "Grafos - Busca.h"
-#include "Fila.h"
 //#include "Grafos - Matriz adjacencia.h"
 
 #define INF 2500000
-
+/*
 void busca_profundidade(tgrafo *grafo)
 {
   tvertice v;
@@ -54,7 +53,7 @@ void visita_bfs(tvertice v, int cor[], tgrafo *grafo)
   tapontador p;
   tpeso peso;
 
-  /*Falta o TAD de fila para continuar */
+  /*Falta o TAD de fila para continuar
 
 }
 
@@ -68,10 +67,12 @@ void dijkstra(struct tgrafo *grafo, tvertice v){
 
 }
 
+*/
+
 int Floydinho(tgrafo *grafo){
-    int V = grafo->num_vertices;
+   int V = grafo->num_vertices;
    int dist[V][V];
-   int i,j k;
+   int i,j, k;
     /* Preenche a matriz com infinito*/
    for(i = 0; i < V; i++){
         for(j = 0; j < V; j++){
@@ -92,12 +93,10 @@ int Floydinho(tgrafo *grafo){
     /*Coloca os pesos iniciais na matriz*/
    for(i = 0; i < V; i++){
         p = grafo->vet[i];
-        p = p->prox;
         while(p != NULL){
-            if(i == p->id){
-                break;
+            if(i != p->id && p->peso != INF){
+                dist[i][p->id] = p->peso;
             }
-            dist[i][p->id] = p->peso;
             p = p->prox;
         }
    }
@@ -117,11 +116,20 @@ int Floydinho(tgrafo *grafo){
    int maior = 0;
    for(i = 0; i < V; i++){
         for(j = 0; j < V; j++){
-            if(maior < dist[j][i] && dist[j][i] != INF)
+            if(dist[j][i] != INF && maior < dist[j][i])
                 maior = dist[j][i];
         }
         exc[i] = maior;
         maior = 0;
+   }
+
+   tapontador_vertice v;
+
+   for(i = 0; i < V; i++){
+        for(j = 0; j < V; j++){
+            v = grafo->vet[i];
+            dist[i][j] = dist[i][j]*v->egressos;
+        }
    }
 
    maior = exc[0];
@@ -129,7 +137,7 @@ int Floydinho(tgrafo *grafo){
 
    /*Escolhe o vértice central */
    for(i = 1; i < V; i++){
-        if(exc[i] > maior){
+        if(exc[i] < maior){
             maior = exc[i];
             verticecentral = i;
         }
