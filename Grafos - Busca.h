@@ -15,3 +15,4 @@ void busca_profundidade(tgrafo *grafo);
 void visita_dfs(tvertice v, int cor[], tgrafo *grafo);
 void busca_largura(tgrafo *grafo);
 void visita_bfs(tvertice v, int cor[], tgrafo *grafo);
+int Floydinho(tgrafo *grafo);
