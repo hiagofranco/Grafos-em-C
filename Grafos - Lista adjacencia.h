@@ -1,34 +1,47 @@
 /* TAD para grafos criados a partir de uma lista de adjacencia. */
 
 /* Defines */
-#define MAXNUMVERTICES 100
+#define MAXNUMVERTICES 50
 #define NULO NULL
 
 /* Variaveis */
-typedef int tpeso;
-typedef int tvertice;
+typedef float tpeso;
+typedef int svertice;
 
+//Bloco onde sao alocados o conteudo de cada vertice
+typedef struct tvertice
+{
+    int egressos;
+    int id;
+    struct taresta *prox;
+} tvertice;
+
+//Bloco onde sao alocados o elementos da aresta
 typedef struct taresta
 {
 	tpeso peso;
-	tvertice vertice;
+	int id;
 	struct taresta *prox;
 } taresta;
 
 typedef taresta* tapontador;
+typedef tvertice* tapontador_vertice;
 
+//Bloco do grafo
 typedef struct tgrafo
 {
-	taresta* vet[MAXNUMVERTICES];
+	tvertice* vet[MAXNUMVERTICES];
 	int num_vertices;
 } tgrafo;
 
 /* Funcoes utilizadas */
 void inicializaGrafo(tgrafo *grafo, int num_vertices);
-void insere_aresta(tgrafo *grafo, tvertice v, tvertice u, tpeso peso);
-void retira_aresta(tgrafo *grafo, tvertice v, tvertice u);
-int existe_aresta(tgrafo *grafo, tvertice v, tvertice u);
+void insere_aresta(tgrafo *grafo, svertice v,svertice u, tpeso peso);
+void retira_aresta(tgrafo *grafo, svertice v, svertice u);
+int existe_aresta(tgrafo *grafo, svertice v,svertice u);
 void libera_grafo(tgrafo *grafo);
-int existe_adj(tgrafo *grafo, tvertice v);
-tapontador primeiro_adj(tgrafo *grafo, tvertice v);
-tapontador prox_adj(tgrafo *grafo, tvertice v);
+int existe_adj(tgrafo *grafo, svertice v);
+tapontador primeiro_adj(tgrafo *grafo, svertice v);
+tapontador prox_adj(tgrafo *grafo, svertice v);
+void insere_egressos(tgrafo *grafo,svertice v,int egressos);
+void printaGrafo(tgrafo *grafo,int num_vertices);
