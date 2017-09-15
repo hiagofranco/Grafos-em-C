@@ -68,8 +68,8 @@
     {
         if (h->tam_atual< h->tam_max)
         {
-            h->tam_atual = h->tam_atual+1;
             h->prioridade[h->tam_atual] = valor;
+            h->tam_atual = h->tam_atual+1;
             return 1;
         }
         return 0;
@@ -79,7 +79,7 @@
     {
       int tamanho = h.tam_atual;
       int i;
-      for (i=1;i<=tamanho;i++)
+      for (i=0;i<tamanho;i++)
       {
           printf("%.2f\t",h.prioridade[i]);
 
@@ -92,9 +92,9 @@
         {
             return 0;
         }
-        h->tam_atual = h->tam_atual+1;
         i = h->tam_atual;
         h->prioridade[i] = chave;
+        h->tam_atual = h->tam_atual+1;
         while ((i>1) && (h->prioridade[pai(i)]<h->prioridade[i]))
         {
             temp = h->prioridade[i];
