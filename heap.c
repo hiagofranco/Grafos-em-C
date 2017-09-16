@@ -24,43 +24,42 @@
 
     void destruirHeap(Heap * h)
     {
-      int tamanho = h->tam_max;
       free(h->prioridade);
       h->tam_max=0;
       h->tam_atual=0;
     }
 
-    void maxHeapify(Heap *h, int i)
+    void minHeapify(Heap *h, int i)
     {
       int esq = filhoEsquerda(i);
       int dir = filhoDireita(i);
       int temp;
-      int maior = i;
-        if ((esq <= h->tam_atual) && (h->prioridade[esq]>h->prioridade[i]))
+      int menor = i;
+        if ((esq < h->tam_atual) && (h->prioridade[esq]<h->prioridade[i]))
         {
-            maior = esq;
+            menor = esq;
         }
-        if ((dir <= h->tam_atual) && (h->prioridade[dir]>h->prioridade[maior]))
+        if ((dir < h->tam_atual) && (h->prioridade[dir]<h->prioridade[menor]))
         {
-            maior = dir;
+            menor = dir;
         }
 
-        if (maior != i)
+        if (menor != i)
         {
             temp = h->prioridade[i];
-            h->prioridade[i] = h->prioridade[maior];
-            h->prioridade[maior] = temp;
-            maxHeapify(h,maior);
+            h->prioridade[i] = h->prioridade[menor];
+            h->prioridade[menor] = temp;
+            minHeapify(h,menor);
         }
     }
 
-    void construirHeapMaximo(Heap *h)
+    void construirHeapMin(Heap *h)
     {
       int i;
       int metadeTamanho = h->tam_atual/2;
       for (i=metadeTamanho;i>0;i--)
       {
-            maxHeapify(h,i);
+            minHeapify(h,i);
       }
     }
 
@@ -102,9 +101,9 @@
             h->prioridade[pai(i)] = temp;
             i = pai(i);
         }
-        return 1;
+            return 1;
     }
-    int Max_valor(Heap *h)
+    int Min_valor(Heap *h)
     {
         return h->prioridade[1];
     }
