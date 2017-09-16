@@ -17,7 +17,7 @@ typedef int parentesco;
  parentesco filhoDireita(int i);
  void destruirHeap(Heap * h);
  void maxHeapify(Heap *h, int i);
- void construirHeapMaximo(Heap *h);
+ void construirHeapMin(Heap *h);
  int inserirForaDeOrdem(Heap * h, int valor);
  void imprimirArranjo(Heap h);
  int inserirHeap(Heap * h, int chave);
