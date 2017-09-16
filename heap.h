@@ -1,24 +1,25 @@
 #include<stdio.h>
 
-#define TAM_MAX 1000
+    typedef struct Heap_node
+    {
+        int vertice;
+        int peso;
+    }Heap_node;
 
-typedef int parentesco;
-
-    typedef struct
+    typedef struct Heap
     {
         int tam_max;
         int tam_atual;
-        float prioridade[TAM_MAX];
+        int *pos;
+        struct Heap_node **matriz;
     }Heap;
 
- void inicializarHeap(Heap *h, int tam_max);
- parentesco pai(int i);
- parentesco filhoEsquerda(int i);
- parentesco filhoDireita(int i);
- void destruirHeap(Heap * h);
- void maxHeapify(Heap *h, int i);
- void construirHeapMin(Heap *h);
- int inserirForaDeOrdem(Heap * h, int valor);
- void imprimirArranjo(Heap h);
- int inserirHeap(Heap * h, int chave);
- int Max_valor(Heap *h);
+int filho_Esquerda(int i);
+int filho_Direita(int i);
+struct Heap_node* new_Min_Heap_Node(int v, int peso);
+struct Heap* create_Min_Heap(int tam_max);
+int is_In_MinHeap(struct Heap *minHeap, int v);
+int isEmpty(struct Heap* minHeap);
+void swap_MinHeap_Node(struct Heap_node** matriz_a, struct Heap_node** matriz_b);
+void min_Heapify(struct Heap* minHeap, int i);
+struct Heap_node* retirar_Min(struct Heap* minHeap);
