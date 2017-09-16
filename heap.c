@@ -114,3 +114,26 @@ struct Heap_node* retirar_Min(struct Heap* minHeap)
     return raiz;
 }
 
+void decrementar_Chave(struct Heap* minHeap, int vertice, int peso)
+{
+    // Pega o indice do vértice no vetor da heap;
+    int i = minHeap->pos[vertice];
+
+    // Pega o no e atualiza o vetor de pesos
+    minHeap->matriz[i]->peso = peso;
+
+    // Realiza o Heapfy
+    while (i && minHeap->matriz[i]->peso < minHeap->matriz[(i - 1) / 2]->peso)
+    {
+        // Troca entre os nós
+        minHeap->pos[minHeap->matriz[i]->vertice] = (i-1)/2;
+        minHeap->pos[minHeap->matriz[(i-1)/2]->vertice] = i;
+        swap_MinHeap_Node(&minHeap->matriz[i],&minHeap->matriz[(i - 1) / 2]);
+
+        // Move para o índice do parente acima
+
+        i = (i - 1) / 2;
+    }
+}
+
+
