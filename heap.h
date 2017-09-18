@@ -1,21 +1,15 @@
 #include<stdio.h>
 
-typedef struct node {
-    int idvertice;
-    int pesoaresta;
-} node ;
-
 typedef struct minHeap {
     int size ;
-    node *elem ;
+    taresta *elem ;
 } minHeap ;
 
 minHeap initMinHeap(int size);
 int isEmpty(minHeap *hp);
-void swap(node *n1, node *n2);
+void swap(taresta *n1, taresta *n2);
 void heapify(minHeap *hp, int i);
-void buildMinHeap(minHeap *hp, int *arr, int size);
-void insertNode(minHeap *hp, int v, int peso);
+void insertNode(minHeap *hp, taresta *u);
 void deleteNode(minHeap *hp);
 void deleteMinHeap(minHeap *hp);
-node retirar_Min(minHeap* minHeap);
+taresta retirar_Min(minHeap* minHeap);

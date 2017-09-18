@@ -95,27 +95,19 @@ int Floydinho(tgrafo *grafo){
    for(i = 0; i < V; i++){
         for(j = 0; j < V; j++){
             for(k = 0; k < V; k++){
-                if(dist[j][i] + dist[i][k] < dist[j][k])
-                dist[j][k] = dist[j][i] + dist[i][k];
+                if(i != j && j != k){
+                    if(dist[j][i] + dist[i][k] < dist[j][k])
+                    dist[j][k] = dist[j][i] + dist[i][k];
+                }
             }
         }
    }
 
-   /* Cria um vetor de excentricidades*/
-   int exc[V];
-   /*Encontra o custo m�ximo de cada coluna da matriz*/
-   int maior = 0;
-   for(i = 0; i < V; i++){
-        for(j = 0; j < V; j++){
-            if(dist[j][i] != INF && maior < dist[j][i])
-                maior = dist[j][i];
-        }
-        exc[i] = maior;
-        maior = 0;
-   }
-
    tapontador_vertice v;
 
+   /*Multiplica a matriz pelo numero de egressos
+   para levarmos em conta o menor deslocamento de pessoas
+   (pessoas * deslocamento)*/
    for(i = 0; i < V; i++){
         for(j = 0; j < V; j++){
             v = grafo->vet[i];
@@ -123,14 +115,42 @@ int Floydinho(tgrafo *grafo){
         }
    }
 
+   /* Cria um vetor de excentricidades*/
+   int exc[V];
+   /*Encontra o custo máximo de cada coluna da matriz*/
+   int maior = 0;
+   for(i = 0; i < V; i++){
+        for(j = 0; j < V; j++){
+            if(i != j && dist[j][i] != INF && maior < dist[j][i])
+                maior = dist[j][i];
+        }
+        exc[i] = maior;
+        maior = 0;
+   }
+
    maior = exc[0];
    int verticecentral = 0;
+   int entradas;
+   tapontador q;
 
-   /*Escolhe o v�rtice central */
-   for(i = 1; i < V; i++){
-        if(exc[i] < maior){
-            maior = exc[i];
-            verticecentral = i;
+   /*Escolhe o vértice central
+   O de menos excentricidade entre as maiores */
+   for(i = 0; i < V; i++){
+        p = grafo->vet[i];
+        for(j = 0; j < V; j++){
+            q = grafo->vet[j];
+            q = q->prox;
+            entradas = 0;
+            while(q != NULL){
+                if(i != j && q->id == p->id){
+                    entradas = 1;
+                }
+                q = q->prox;
+            }
+            if(entradas == 1 && exc[p->id] < maior){
+                maior = exc[p->id];
+                verticecentral = p->id;
+            }
         }
    }
 
@@ -138,14 +158,14 @@ int Floydinho(tgrafo *grafo){
 }
 
 void Dijkstra(tgrafo *grafo, int verticev){
+    /*Pega o numero de vertices
+    cria um vetor para armazenar a distancia para cada vertice
+    e outro vetor para armazenar os antecessores (menor caminho até todos) */
     int numv = grafo->num_vertices;
     int dist[numv], ant[numv];
     int i;
 
-    tapontador p;
-
-    minHeap h;
-    h = initMinHeap(numv);
+    /*Preenche o vetor de distâncias com infinito e 0 para a raiz inderida na funcao*/
     for(i = 0; i < numv; i++){
         if(i == verticev){
             dist[i] = 0;
@@ -154,35 +174,52 @@ void Dijkstra(tgrafo *grafo, int verticev){
             dist[i] = INF;
         }
         ant[i] = -1;
-        insertNode(&h,p->id,p->peso);
+    }
+    /*Inicializa a árvore*/
+    minHeap h;
+    h = initMinHeap(numv);
+
+    /*Inicializa um ponteiro para o vertice raiz
+    aponta para o proximo
+    armazenando na arvore os ids dos vertice ao qual a raiz está ligada
+    mais a distancia de ligação entre eles */
+    tapontador p;
+    p = grafo->vet[verticev];
+    p = p->prox;
+    while(p != NULL){
+        insertNode(&h,&p);
+        p = p->prox;
     }
 
-
-    node u;
-    tapontador v;
+    tapontador u,v;
     int alt;
+
+    /*Aqui, a ideia é retirar os nos da heap, que esta ordenada com os menores caminhos na raiz
+    e com isso ir atualizando os valores do vetor de distancia e de antecessores */
     while(!isEmpty(&h)){
-        u = retirar_Min(&h);
-        v = grafo->vet[u.idvertice]->prox;
+        *u = retirar_Min(&h);
+        v = grafo->vet[u->id]->prox;
         while(v != NULL){
-            if(dist[u.idvertice] == INF){
+            if(dist[u->id] == INF){
                 alt = v->peso;
             }
             else{
-                alt = dist[u.idvertice] + v->peso;
+                alt = dist[u->id] + v->peso;
             }
             if(alt < dist[v->id]){
                 dist[v->id] = alt;
-                ant[v->id] = u.idvertice;
+                ant[v->id] = u->id;
             }
             v = v->prox;
         }
     }
+
+    /*Printa o vetor de menores distancias*/
     printf("\nMenores distancias:");
     for(i = 0; i < numv; i++){
         printf(" %d", dist[i]);
     }
-
+    /*Printa o vetor de menores caminhos (antecessores)*/
     printf("\nAntecessores (caminho):");
     for(i = 0; i < numv; i++){
         printf(" %d", ant[i]);
@@ -190,7 +227,18 @@ void Dijkstra(tgrafo *grafo, int verticev){
 
 }
 
-/*        while Q is not empty:                  // The main loop
+/*  PSEUDOCÓDIGO QUE USEI PARA GERAR ESSE LINDO ALGORITMO
+    function Dijkstra(Graph, source):
+       dist[source]  := 0                     // Distance from source to source
+       for each vertex v in Graph:            // Initializations
+           if v ≠ source
+               dist[v]  := infinity           // Unknown distance function from source to v
+               previous[v]  := undefined      // Previous node in optimal path from source
+           end if
+           add v to Q                         // All nodes initially in Q
+       end for
+
+      while Q is not empty:                  // The main loop
           u := vertex in Q with min dist[u]  // Source node in first case
           remove u from Q
 
@@ -203,4 +251,4 @@ void Dijkstra(tgrafo *grafo, int verticev){
           end for
       end while
       return dist[], previous[]
-  end function*/
+  end function */

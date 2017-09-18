@@ -17,15 +17,15 @@ minHeap initMinHeap(int size) {
     return hp ;
 }
 
-void swap(node *n1, node *n2) {
-    node temp = *n1 ;
+void swap(taresta *n1, taresta *n2) {
+    taresta temp = *n1 ;
     *n1 = *n2 ;
     *n2 = temp ;
 }
 
 void heapify(minHeap *hp, int i) {
-    int smallest = (LCHILD(i) < hp->size && hp->elem[LCHILD(i)].pesoaresta < hp->elem[i].pesoaresta) ? LCHILD(i) : i ;
-    if(RCHILD(i) < hp->size && hp->elem[RCHILD(i)].pesoaresta < hp->elem[smallest].pesoaresta) {
+    int smallest = (LCHILD(i) < hp->size && hp->elem[LCHILD(i)].peso < hp->elem[i].peso) ? LCHILD(i) : i ;
+    if(RCHILD(i) < hp->size && hp->elem[RCHILD(i)].peso < hp->elem[smallest].peso) {
         smallest = RCHILD(i) ;
     }
     if(smallest != i) {
@@ -33,7 +33,7 @@ void heapify(minHeap *hp, int i) {
         heapify(hp, smallest) ;
     }
 }
-
+/*
 void buildMinHeap(minHeap *hp, int *arr, int size) {
     int i ;
 
@@ -54,20 +54,21 @@ void buildMinHeap(minHeap *hp, int *arr, int size) {
         heapify(hp, i) ;
     }
 }
+*/
 
-void insertNode(minHeap *hp, int v, int peso) {
+void insertNode(minHeap *hp, taresta *u) {
     if(hp->size) {
-        hp->elem = realloc(hp->elem, (hp->size + 1) * sizeof(node)) ;
+        hp->elem = realloc(hp->elem, (hp->size + 1) * sizeof(taresta)) ;
     } else {
-        hp->elem = malloc(sizeof(node)) ;
+        hp->elem = malloc(sizeof(taresta)) ;
     }
 
-    node nd ;
-    nd.idvertice = v;
-    nd.pesoaresta = peso;
+    taresta nd ;
+    nd.id = u.id;
+    nd.peso = u.peso;
 
     int i = (hp->size)++ ;
-    while(i && nd.pesoaresta < hp->elem[PARENT(i)].pesoaresta) {
+    while(i && nd.peso < hp->elem[PARENT(i)].peso) {
         hp->elem[i] = hp->elem[PARENT(i)] ;
         i = PARENT(i) ;
     }
@@ -76,9 +77,9 @@ void insertNode(minHeap *hp, int v, int peso) {
 
 void deleteNode(minHeap *hp) {
     if(hp->size) {
-        printf("Deleting node %d\n\n", hp->elem[0].idvertice) ;
+        printf("Deleting node %d\n\n", hp->elem[0].id) ;
         hp->elem[0] = hp->elem[--(hp->size)] ;
-        hp->elem = realloc(hp->elem, hp->size * sizeof(node)) ;
+        hp->elem = realloc(hp->elem, hp->size * sizeof(taresta)) ;
         heapify(hp, 0) ;
     } else {
         printf("\nMin Heap is empty!\n") ;
@@ -90,13 +91,13 @@ void deleteMinHeap(minHeap *hp) {
     free(hp->elem) ;
 }
 
-node retirar_Min(minHeap* minHeap)
+taresta retirar_Min(minHeap* minHeap)
 {
     // Gurdar a raiz do nó
-    node raiz = minHeap->elem[0];
+    taresta raiz = minHeap->elem[0];
 
     // Troca o nó raiz com o ultímo nó
-    node ultimo_Node = minHeap->elem[minHeap->size-1];
+    taresta ultimo_Node = minHeap->elem[minHeap->size-1];
     minHeap->elem[0] = ultimo_Node;
 
     // Reduz tamanho atual  heap e da raiz heapify
