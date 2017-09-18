@@ -1,139 +1,107 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include"heap.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include "heap.h"
 
-#define TRUE 1
-#define FALSE 0
+#define LCHILD(x) 2 * x + 1
+#define RCHILD(x) 2 * x + 2
+#define PARENT(x) (x - 1) / 2
 
-int filho_Esquerda(int i)
-{
-    return 2i+1;
-}
-
-int filho_Direita(int i)
-{
-    return 2i+2;
+int isEmpty(minHeap *hp){
+    if(hp->size == 0) return 1;
+    else return 0;
 }
 
-struct Heap_node* new_Min_Heap_Node(int v, int peso)
-{
-    struct Heap_node* min_Heap_Node = (struct Heap_node*) malloc(sizeof(struct Heap_node));
-    min_Heap_Node->vertice = v;
-    min_Heap_Node->peso = peso;
-    return min_Heap_Node;
+minHeap initMinHeap(int size) {
+    minHeap hp ;
+    hp.size = 0 ;
+    return hp ;
 }
-struct Heap* create_Min_Heap(int tam_max)
-{
-    struct Heap* minHeap =(struct Heap*) malloc(sizeof(struct Heap));
-    minHeap->pos = (int *)malloc(tam_max * sizeof(int));
-    minHeap->tam_atual = 0;
-    minHeap->tam_max = tam_max;
-    minHeap->matriz =(struct Heap_node**) malloc(tam_max * sizeof(struct Heap_node*));
-    return minHeap;
+
+void swap(node *n1, node *n2) {
+    node temp = *n1 ;
+    *n1 = *n2 ;
+    *n2 = temp ;
 }
-int is_In_MinHeap(struct Heap *minHeap, int v)
-{
-   if (minHeap->pos[v] < minHeap->tam_atual)
-   {
-       return TRUE;
-   }
-   else
-   {
-        return FALSE;
-   }
-}
-int isEmpty(struct Heap* minHeap)
-{
-    if(minHeap->tam_atual == 0)
-    {
-        return TRUE;
+
+void heapify(minHeap *hp, int i) {
+    int smallest = (LCHILD(i) < hp->size && hp->elem[LCHILD(i)].pesoaresta < hp->elem[i].pesoaresta) ? LCHILD(i) : i ;
+    if(RCHILD(i) < hp->size && hp->elem[RCHILD(i)].pesoaresta < hp->elem[smallest].pesoaresta) {
+        smallest = RCHILD(i) ;
     }
-    else
-    {
-        return FALSE;
+    if(smallest != i) {
+        swap(&(hp->elem[i]), &(hp->elem[smallest])) ;
+        heapify(hp, smallest) ;
     }
 }
-void swap_MinHeap_Node(struct Heap_node** matriz_a, struct Heap_node** matriz_b)
-{
-    struct Heap_node* matriz_temp = *matriz_a;
-    *matriz_a = *matriz_b;
-    *matriz_b = matriz_temp;
-}
-void min_Heapify(struct Heap* minHeap, int i)
-{
-    int menor, esq, dir;
-    menor = i;
-    esq = filho_Esquerda(i);
-    dir = filho_Direita(i);
 
-    if (esq < minHeap->tam_atual && minHeap->matriz[esq]->peso < minHeap->matriz[menor]->peso)
-    {
-        menor = esq;
+void buildMinHeap(minHeap *hp, int *arr, int size) {
+    int i ;
+
+    // Insertion into the heap without violating the shape property
+    for(i = 0; i < size; i++) {
+        if(hp->size) {
+            hp->elem = realloc(hp->elem, (hp->size + 1) * sizeof(node)) ;
+        } else {
+            hp->elem = malloc(sizeof(node)) ;
+        }
+        node nd ;
+        nd.pesoaresta = arr[i] ;
+        hp->elem[(hp->size)++] = nd ;
     }
-    if (dir < minHeap->tam_atual &&minHeap->matriz[dir]->peso < minHeap->matriz[menor]->peso)
-    {
-        menor = dir;
-    }
-    if (menor!=i)
-    {
-        //Nós a serem trocados na minheap
-        Heap_node *menor_Node = minHeap->matriz[menor];
-        Heap_node *i_Node = minHeap->matriz[i];
 
-        //trocar Posições
-        minHeap->pos[menor_Node->vertice] = i;
-        minHeap->pos[i_Node->vertice] = menor;
-
-        // Trocar Nós
-        swap_MinHeap_Node(&minHeap->matriz[menor], &minHeap->matriz[i]);
-
-        min_Heapify(minHeap, menor);
+    // Making sure that heap property is also satisfied
+    for(i = (hp->size - 1) / 2; i >= 0; i--) {
+        heapify(hp, i) ;
     }
 }
-struct Heap_node* retirar_Min(struct Heap* minHeap)
-{
-    if (isEmpty(minHeap))
-    {
-        return NULL;
+
+void insertNode(minHeap *hp, int v, int peso) {
+    if(hp->size) {
+        hp->elem = realloc(hp->elem, (hp->size + 1) * sizeof(node)) ;
+    } else {
+        hp->elem = malloc(sizeof(node)) ;
     }
+
+    node nd ;
+    nd.idvertice = v;
+    nd.pesoaresta = peso;
+
+    int i = (hp->size)++ ;
+    while(i && nd.pesoaresta < hp->elem[PARENT(i)].pesoaresta) {
+        hp->elem[i] = hp->elem[PARENT(i)] ;
+        i = PARENT(i) ;
+    }
+    hp->elem[i] = nd ;
+}
+
+void deleteNode(minHeap *hp) {
+    if(hp->size) {
+        printf("Deleting node %d\n\n", hp->elem[0].idvertice) ;
+        hp->elem[0] = hp->elem[--(hp->size)] ;
+        hp->elem = realloc(hp->elem, hp->size * sizeof(node)) ;
+        heapify(hp, 0) ;
+    } else {
+        printf("\nMin Heap is empty!\n") ;
+        free(hp->elem) ;
+    }
+}
+
+void deleteMinHeap(minHeap *hp) {
+    free(hp->elem) ;
+}
+
+node retirar_Min(minHeap* minHeap)
+{
     // Gurdar a raiz do nó
-    struct Heap_node* raiz = minHeap->matriz[0];
+    node raiz = minHeap->elem[0];
 
     // Troca o nó raiz com o ultímo nó
-    struct Heap_node* ultimo_Node = minHeap->matriz[minHeap->tam_atual - 1];
-    minHeap->matriz[0] = ultimo_Node;
-
-    // Atualizar a posicao do ultimo nó
-    minHeap->pos[raiz->vertice] = minHeap->tam_atual-1;
-    minHeap->pos[ultimo_Node->vertice] = 0;
+    node ultimo_Node = minHeap->elem[minHeap->size-1];
+    minHeap->elem[0] = ultimo_Node;
 
     // Reduz tamanho atual  heap e da raiz heapify
-    minHeap->tam_atual = minHeap->tam_atual-1;
-    min_Heapify(minHeap,0);
+    minHeap->size = minHeap->size-1;
+    heapify(minHeap,0);
 
     return raiz;
 }
-
-void decrementar_Chave(struct Heap* minHeap, int vertice, int peso)
-{
-    // Pega o indice do vértice no vetor da heap;
-    int i = minHeap->pos[vertice];
-
-    // Pega o no e atualiza o vetor de pesos
-    minHeap->matriz[i]->peso = peso;
-
-    // Realiza o Heapfy
-    while (i && minHeap->matriz[i]->peso < minHeap->matriz[(i - 1) / 2]->peso)
-    {
-        // Troca entre os nós
-        minHeap->pos[minHeap->matriz[i]->vertice] = (i-1)/2;
-        minHeap->pos[minHeap->matriz[(i-1)/2]->vertice] = i;
-        swap_MinHeap_Node(&minHeap->matriz[i],&minHeap->matriz[(i - 1) / 2]);
-
-        // Move para o índice do parente acima
-
-        i = (i - 1) / 2;
-    }
-}
-
-
