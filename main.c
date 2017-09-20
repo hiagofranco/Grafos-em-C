@@ -1,9 +1,10 @@
 #include<stdio.h>
-#include"Grafos_Lista_adjacencia.h"
+#include"GrafosListaAdjacencia.h"
+#include"GrafosBusca.h"
 
 int main()
 {
-    int i;
+    int i,j;
     int id1,id2;
     int n_cidades;
     int qt_estrada;
@@ -30,6 +31,19 @@ int main()
 
     printaGrafo(&Grafo, n_cidades);
 
-    printf("\nCidade Central: %d", Floydinho(&Grafo));
+    printf("\nCidade Central: %d\n", Floydinho(&Grafo));
+
+    int matriz[n_cidades][n_cidades];
+    Dijkstra(&Grafo,quantidadeDeVertices(&Grafo),matriz);
+     for(i = 0;i<n_cidades;i++)
+    {
+        for(j = 0;j<n_cidades;j++)
+        {
+            printf("%d\t", matriz[i][j]);
+        }
+        printf("\n");
+    }
+    betweenness(n_cidades,matriz);
+
     return 0;
 }
