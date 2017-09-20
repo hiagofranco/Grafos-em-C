@@ -131,7 +131,7 @@ void guardar(int tam,int matriz_guardada[][tam],int i, int j,int valor)
     matriz_guardada[i][j] = valor;
 }
 
-void Dijkstra(tgrafo *grafo,int numv,int matriz_antecessores[][numv])
+void Operacao_Dijkstra(tgrafo *grafo,int numv,int matriz_antecessores[][numv])
 {
     /*Pega o numero de vertices
     cria um vetor para armazenar a distancia para cada vertice
@@ -233,7 +233,22 @@ void Dijkstra(tgrafo *grafo,int numv,int matriz_antecessores[][numv])
         }
     }
 }
-void betweenness(int numv,int ant[][numv])
+void Dijkstra(tgrafo *grafo)
+{
+    int numv = grafo->num_vertices;
+    int matriz_antecessores[numv][numv];
+    Operacao_Dijkstra(grafo,numv,matriz_antecessores);
+}
+
+void betwenness(tgrafo *grafo)
+{
+    int numv = grafo->num_vertices;
+    int matriz_antecessores[numv][numv];
+    Operacao_Dijkstra(grafo,numv,matriz_antecessores);
+    operacao_betweenness(numv,matriz_antecessores);
+}
+
+void operacao_betweenness(int numv,int ant[][numv])
 {
     int cidadeAtual, i, j;
     int valorBetweenness[numv];      //cada lugar do vetor armazena o valor de betweenness para cada vertice

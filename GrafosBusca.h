@@ -12,9 +12,10 @@
 
 /* FUNCOES UTILIZADAS */
 int Floydinho(tgrafo *grafo);
-void Dijkstra(tgrafo *grafo,int numv,int matriz_antecessores[][numv]);
+void Dijkstra(tgrafo *grafo);
+void Operacao_Dijkstra(tgrafo *grafo,int numv,int matriz_antecessores[][numv]);
 void guardar(int tam, int matriz_guardada[][tam],int i, int j,int valor);
 int quantidadeDeVertices(tgrafo *grafo);
-void betweenness(int numv,int ant[][numv]);
-
+void betwenness(tgrafo *grafo);
+void operacao_betweenness(int numv,int ant[][numv]);
 
