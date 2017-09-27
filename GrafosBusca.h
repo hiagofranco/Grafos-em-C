@@ -13,9 +13,10 @@
 /* FUNCOES UTILIZADAS */
 int Floydinho(tgrafo *grafo);
 void Dijkstra(tgrafo *grafo);
-void Operacao_Dijkstra(tgrafo *grafo,int numv,int matriz_antecessores[][numv]);
+void Operacao_Dijkstra(tgrafo *grafo,int numv,int matriz_antecessores[][numv],int escolha);
 void guardar(int tam, int matriz_guardada[][tam],int i, int j,int valor);
 int quantidadeDeVertices(tgrafo *grafo);
 void betwenness(tgrafo *grafo);
 void operacao_betweenness(int numv,int ant[][numv]);
+void vertice_central(tgrafo *grafo);
 

@@ -28,13 +28,7 @@ int main()
         scanf("%d %d %f", &id1,&id2,&estrada_tam);
         insere_aresta(&Grafo,id1,id2,estrada_tam);
     }
-
-    printaGrafo(&Grafo, n_cidades);
-
-    printf("\nCidade Central: %d\n", Floydinho(&Grafo));
-
-    Dijkstra(&Grafo);
+    vertice_central(&Grafo);
     betwenness(&Grafo);
-
     return 0;
 }
