@@ -1,9 +1,7 @@
-/* Descricao das funcoes declaradas me Grafos - busca.h */
+/* Descricao das funcoes declaradas me GrafosBusca.h */
 #include <stdio.h>
 #include <stdlib.h>
 #include "GrafosBusca.h"
-
-//#include "Grafos - Matriz adjacencia.h"
 
 #define INF 2500000
 
