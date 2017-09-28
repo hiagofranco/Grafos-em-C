@@ -11,9 +11,5 @@
 /* VARIAVEIS */
 
 /* FUNCOES UTILIZADAS */
-int Floydinho(tgrafo *grafo);
-void Dijkstra(tgrafo *grafo);
-int quantidadeDeVertices(tgrafo *grafo);
-void betweenness(int matrizAntecessores[][MAXNUMVERTICES], int numVertices);
-
-
+void betwenness(tgrafo *grafo);
+void vertice_central(tgrafo *grafo);

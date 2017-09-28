@@ -5,17 +5,9 @@
 
 #define INF 2500000
 
-int quantidadeDeVertices(tgrafo *grafo)
+void vertice_central(tgrafo *grafo)
 {
-    return grafo->num_vertices;
-}
-void guardar(int tam,int matriz_guardada[][tam],int i, int j,int valor)
-{
-    matriz_guardada[i][j] = valor;
-}
-
-void Operacao_Dijkstra(tgrafo *grafo,int numv,int matriz[][numv],int escolha)
-{
+    int numv = quantidadeDeVertices(grafo);
     /*Cria uma matriz para as menores distancias e uma outra para os caminhos percorridos
     as cidades estão da seguinte maneira:
         -Linhas: cidade de origem
@@ -100,56 +92,33 @@ void Operacao_Dijkstra(tgrafo *grafo,int numv,int matriz[][numv],int escolha)
         }
     }
 
-     /*verifica qual o critério desejado
-    se for o 1, escolha = 2 e a matriz de distâncias é guardada para ser encontrado o vertice mais central, considerando nº de egressos
-    se for o 2, escolha = 1 e a matriz de antecessores é guardada para ser usada na função de betweenness   */
-    if(escolha==1)
-    {
-        for(i = 0;i<numv;i++)
-        {
-            for(j = 0;j<numv;j++)
-            {
-                guardar(numv,matriz,i,j,ant[i][j]);
-            }
+    printf("\nMatriz de distancias: \n");
+    for(i = 0; i < numv; i++){
+        for(j = 0; j < numv; j++){
+            printf("%.2f  ", dist[i][j]);
         }
+        printf("\n");
     }
-    else
-    {
-        if(escolha==2)
-        {
-            for(i = 0;i<numv;i++)
-            {
-                for(j = 0;j<numv;j++)
-                {
-                    guardar(numv,matriz,i,j,dist[i][j]);
-                }
-            }
+
+    printf("\nMatriz de caminhos: \n");
+    for(i = 0; i < numv; i++){
+        for(j = 0; j < numv; j++){
+            printf("%d  ", ant[i][j]);
         }
+        printf("\n");
     }
-}
 
-//Função que encontra o vertice central de acordo com o Criterio 1
-void vertice_central(tgrafo *grafo)
-{
-    /*Declaração das constantes e da matriz de distancias
-    que ira conter as menores distâncias para os vértices a partir de cada um dos vértices do grafo */
-    int i,j;
-    int numv = grafo->num_vertices;
-    int dist[numv][numv];
-    Operacao_Dijkstra(grafo,numv,dist,2); //Chama o Dijkstra para preencher a matriz de distancias
 
-    tapontador_vertice v;
-
-    /*Aqui multiplicamos cada linha da matriz de distancias pelo numero de egressos de seus respectivos vertices
+     /*Aqui multiplicamos cada linha da matriz de distancias pelo numero de egressos de seus respectivos vertices
     Com isso, conseguimos uma forma de analisar a distancia total percorrida, considerando o numero de pessoas */
     for(i = 0; i < numv; i++)
     {
-        v = grafo->vet[i];
+        verticeAtual = grafo->vet[i];
         for(j = 0; j < numv; j++)
         {
             if(dist[i][j] != INF)
             {
-                dist[i][j] = dist[i][j]*v->egressos;
+                dist[i][j] = dist[i][j]*verticeAtual->egressos;
             }
         }
     }
@@ -177,7 +146,7 @@ void vertice_central(tgrafo *grafo)
     ou seja, o vertice qual tera o menor deslocamento total de pessoas para ser alcançado
     Ao encontrarmos o menor deslocamento, atribuimos o indice do vertice com o menor deslocamento
     total à variável cidade central. */
-    float menor = vet_desloc[0];
+    menor = vet_desloc[0];
     int cc_crit_1 = 0;
     for(i = 1; i < numv; i++)
     {
@@ -190,27 +159,98 @@ void vertice_central(tgrafo *grafo)
     /*Printamos o indice do vertice central, que será a cidade a ser escolhida que satisfaz
     o Criterio 1 */
     printf("%d\n", cc_crit_1);
-}
 
-void Dijkstra(tgrafo *grafo)
-{
-    int numv = grafo->num_vertices;
-    int matriz_antecessores[numv][numv];
-    Operacao_Dijkstra(grafo,numv,matriz_antecessores,1);
+
 }
 
 void betwenness(tgrafo *grafo)
 {
-    int numv = grafo->num_vertices;
-    int matriz_antecessores[numv][numv];
-    Operacao_Dijkstra(grafo,numv,matriz_antecessores,1);
-    operacao_betweenness(numv,matriz_antecessores);
-}
+    int numv = quantidadeDeVertices(grafo);
+    /*Cria uma matriz para as menores distancias e uma outra para os caminhos percorridos
+    as cidades estão da seguinte maneira:
+        -Linhas: cidade de origem
+        -Colunas: cidade de destino*/
+    float dist[numv][numv];
+    int ant[numv][numv];
 
-void operacao_betweenness(int numv,int ant[][numv])
-{
+    /*i e j, variaveis auxiliares para percorrer a matriz
+    a matriz marcacao serve para marcar os vertices já analisados durante a execucao do algoritmo de Dijkstra*/
+    int i, j, marcacao[numv][numv];
+
+    /*Preenche a matriz de distancias com infinito e 0 para a diagonal principal
+    inicialmente marca todos os vertices como brancos (nao analisados)*/
+    for (i = 0; i < numv; i++)
+    {
+        for(j = 0; j < numv; j++)
+        {
+            if(i == j)
+            {
+                dist[i][j] = 0;
+            }
+            else
+            {
+                dist[i][j] = INF;
+            }
+            marcacao[i][j] = BRANCO;
+            ant[i][j] = -1;
+        }
+    }
+
+    /*menor é utilizada para pegar a menor distancia durante a execução do Dijkstra
+    contadorMax serve para analisar no maximo a quantidade de vertices no grafo
+    cidadeAtual é a cidade de origem  */
+    float menor;
+    int contadorMax, cidadeAtual;
+
+    //ponteiros para aresta e vertice, respectivamente
+    tapontador arestaAtual;
+    tapontador_vertice verticeAtual;
+
+    //for para o Dijkstra ter origem em todos os vertices
+    for(cidadeAtual = 0; cidadeAtual < numv; cidadeAtual++)
+    {
+        //verticeAtual aponta para o vertice que está sendo analisado
+        verticeAtual = grafo->vet[cidadeAtual];
+        //arestaAtual aponta para a aresta que está sendo analisada
+        arestaAtual = grafo->vet[cidadeAtual]->prox;
+
+        //Dijkstra em si para um vertice
+        for(contadorMax = 0; contadorMax < numv; contadorMax++)
+        {
+            while(arestaAtual != NULL)      //verifica todos as arestas de um vertice
+            {
+                // if verifica se o vertice já foi analisado e se a distância encontrada nessa iteração é menor do que a encontrada nas anteriores
+                if((arestaAtual->peso + dist[cidadeAtual][verticeAtual->id] < dist[cidadeAtual][arestaAtual->id]) && (marcacao[cidadeAtual][arestaAtual->id] == BRANCO))
+                {
+                    dist[cidadeAtual][arestaAtual->id] = arestaAtual->peso + dist[cidadeAtual][verticeAtual->id];
+                    ant[cidadeAtual][arestaAtual->id] = verticeAtual->id;
+                }
+                arestaAtual = arestaAtual->prox;
+            }
+            marcacao[cidadeAtual][verticeAtual->id] = PRETO;        //terminou de analisar o vertice, marca-o como PRETO
+
+            menor = INF;
+             //aqui pegamos a menor das distâncias na linha da matriz correspondente a cidade de origem
+            for (i = 0; i < numv; i++)
+            {
+                if ((dist[cidadeAtual][i] < menor) && (marcacao[cidadeAtual][i] != PRETO)) //deve-se verificar se o vértice já foi analisado
+                {
+                    menor = dist[cidadeAtual][i];
+                    verticeAtual = grafo->vet[i];
+                    arestaAtual = verticeAtual->prox;
+                }
+            }
+
+            /*se a menor distância for infinito, significa que não há caminho entre a cidade de origem
+            e as que ainda não foram analisadas, portanto podemos parar a execução do Dijkstra*/
+            if(menor == INF)
+            {
+                break;
+            }
+        }
+    }
+
     int maior = 0;
-    int cidadeAtual, i, j;
     int valorBetweenness[numv];      //cada lugar do vetor armazena o valor de betweenness para cada vertice
     int seguidorDeCaminho;           //a funcao dessa variavel esta explicada abaixo
 
@@ -264,5 +304,7 @@ void operacao_betweenness(int numv,int ant[][numv])
             maior = i+1;
         }
     }
-    printf("%d",maior);
+    printf("%d  %d",maior, valorBetweenness[maior]);
+
 }
+
