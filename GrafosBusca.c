@@ -8,12 +8,11 @@
 void vertice_central(tgrafo *grafo)
 {
     int numv = quantidadeDeVertices(grafo);
-    /*Cria uma matriz para as menores distancias e uma outra para os caminhos percorridos
+    /*Cria uma matriz para as menores distancias
     as cidades estão da seguinte maneira:
         -Linhas: cidade de origem
         -Colunas: cidade de destino*/
     float dist[numv][numv];
-    int ant[numv][numv];
 
     /*i e j, variaveis auxiliares para percorrer a matriz
     a matriz marcacao serve para marcar os vertices já analisados durante a execucao do algoritmo de Dijkstra*/
@@ -34,7 +33,6 @@ void vertice_central(tgrafo *grafo)
                 dist[i][j] = INF;
             }
             marcacao[i][j] = BRANCO;
-            ant[i][j] = -1;
         }
     }
 
@@ -65,7 +63,6 @@ void vertice_central(tgrafo *grafo)
                 if((arestaAtual->peso + dist[cidadeAtual][verticeAtual->id] < dist[cidadeAtual][arestaAtual->id]) && (marcacao[cidadeAtual][arestaAtual->id] == BRANCO))
                 {
                     dist[cidadeAtual][arestaAtual->id] = arestaAtual->peso + dist[cidadeAtual][verticeAtual->id];
-                    ant[cidadeAtual][arestaAtual->id] = verticeAtual->id;
                 }
                 arestaAtual = arestaAtual->prox;
             }
@@ -91,23 +88,6 @@ void vertice_central(tgrafo *grafo)
             }
         }
     }
-
-    printf("\nMatriz de distancias: \n");
-    for(i = 0; i < numv; i++){
-        for(j = 0; j < numv; j++){
-            printf("%.2f  ", dist[i][j]);
-        }
-        printf("\n");
-    }
-
-    printf("\nMatriz de caminhos: \n");
-    for(i = 0; i < numv; i++){
-        for(j = 0; j < numv; j++){
-            printf("%d  ", ant[i][j]);
-        }
-        printf("\n");
-    }
-
 
      /*Aqui multiplicamos cada linha da matriz de distancias pelo numero de egressos de seus respectivos vertices
     Com isso, conseguimos uma forma de analisar a distancia total percorrida, considerando o numero de pessoas */
@@ -135,10 +115,7 @@ void vertice_central(tgrafo *grafo)
     {
         for(j = 0; j < numv; j++)
         {
-            if(dist[j][i] != INF)
-            {
-                vet_desloc[i] = vet_desloc[i] + dist[j][i];
-            }
+            vet_desloc[i] = vet_desloc[i] + dist[j][i];
         }
     }
 
@@ -158,7 +135,7 @@ void vertice_central(tgrafo *grafo)
     }
     /*Printamos o indice do vertice central, que será a cidade a ser escolhida que satisfaz
     o Criterio 1 */
-    printf("%d\n", cc_crit_1);
+    printf("Cidade escolhida pelo criterio 1: %d\n", cc_crit_1);
 
 
 }
@@ -274,7 +251,7 @@ void betwenness(tgrafo *grafo)
                         seguidorDeCaminho = ant[i][j];           /*seguidorDeCaminho serve para armazenar os vértices antecessores
                                                                 permitindo assim "caminhar" pelo vetor do destino até a origem*/
 
-                        while(seguidorDeCaminho != -1)         //se o seguidorDeCaminho for -1, quer dizer que retornamos a origem
+                        while(seguidorDeCaminho != -1)         //se o seguidorDeCaminho for -1, quer dizer que retornamos a origem ou não existe caminho
                         {
                             if(seguidorDeCaminho == cidadeAtual)        /*se o seguidorDeCaminho for igual a cidade analisada
                                                                         ela está no meio de um dos menores caminhos no grafo,
@@ -304,7 +281,7 @@ void betwenness(tgrafo *grafo)
             maior = i+1;
         }
     }
-    printf("%d  %d",maior, valorBetweenness[maior]);
+    printf("Cidade escolhida pelo criterio 2: %d\n",maior);
 
 }
 
