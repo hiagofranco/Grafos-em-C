@@ -61,48 +61,25 @@ int main()
         }while(aux==FALSE);
         insere_egressos(&Grafo,i,egressos_cidade);
     }
-    printf("\nProcesso de insercao de Distancias entre arestas\n\n");
+    printf("\nDigite a cidade de origem, a de destino e distancia entre elas nessa ordem, separando-as por espaco\n");
     for(i=0;i<qt_estrada;i++)
     {
         //estrada de tamanho d que liga Id1 a Id2
         do
         {
             aux = TRUE;
-            printf("Digite a cidade de origem:\n");
             scanf("%d",&id1);
             if(id1<0 || id1>=n_cidades)
             {
                 printf("Erro: O ID da cidade de origem e incompativel\n");
                 aux = FALSE;
             }
-            if(aux==FALSE)
-            {
-                system("pause");
-                system("cls");
-            }
-        }while(aux==FALSE);
-
-        do
-        {
-            aux = TRUE;
-            printf("Digite a cidade de destino:\n");
             scanf("%d",&id2);
             if(id2<0 || id2>=n_cidades)
             {
                 printf("Erro: O ID da cidade de destino e incompativel\n");
                 aux = FALSE;
             }
-            if(aux==FALSE)
-            {
-                system("pause");
-                system("cls");
-            }
-        }while(aux==FALSE);
-
-        do
-        {
-            aux = TRUE;
-            printf("Digite a distancia entre as cidades %d e %d:\n",id1,id2);
             scanf("%f", &estrada_tam);
             if(estrada_tam<0 || estrada_tam>100)
             {
@@ -113,6 +90,7 @@ int main()
             {
                 system("pause");
                 system("cls");
+                printf("Redigite as cidades e distancia novamente\n");
             }
         }while(aux==FALSE);
 
