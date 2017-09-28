@@ -61,9 +61,9 @@ int main()
         }while(aux==FALSE);
         insere_egressos(&Grafo,i,egressos_cidade);
     }
-    printf("\nDigite a cidade de origem, a de destino e distancia entre elas nessa ordem, separando-as por espaco\n");
     for(i=0;i<qt_estrada;i++)
     {
+        printf("\nDigite a cidade de origem, a de destino e distancia entre elas nessa ordem, separando-as por espaco\n");
         //estrada de tamanho d que liga Id1 a Id2
         do
         {
@@ -81,7 +81,7 @@ int main()
                 aux = FALSE;
             }
             scanf("%f", &estrada_tam);
-            if(estrada_tam<0 || estrada_tam>100)
+            if(estrada_tam<=0 || estrada_tam>100)
             {
                 printf("Erro: A distancia entre as estradas e incompativel\n");
                 aux = FALSE;
