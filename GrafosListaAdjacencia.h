@@ -48,5 +48,6 @@ tapontador primeiro_adj(tgrafo *grafo, svertice v);
 tapontador prox_adj(tgrafo *grafo, svertice v);
 void insere_egressos(tgrafo *grafo,svertice v,int egressos);
 void printaGrafo(tgrafo *grafo,int num_vertices);
+int quantidadeDeVertices(tgrafo *grafo);
 
 #endif // GRAFOSLISTAADJACENCIA_H

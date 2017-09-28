@@ -186,3 +186,8 @@ void printaGrafo(tgrafo *grafo,int num_vertices)
             printf("\n");
     }
 }
+
+int quantidadeDeVertices(tgrafo *grafo)
+{
+    return grafo->num_vertices;
+}
