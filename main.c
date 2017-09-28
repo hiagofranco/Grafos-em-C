@@ -1,5 +1,7 @@
 #include<stdio.h>
-#include"Grafos_Lista_adjacencia.h"
+#include"GrafosListaAdjacencia.h"
+#include"heap.h"
+#include"GrafosBusca.h"
 
 int main()
 {
@@ -30,6 +32,9 @@ int main()
 
     printaGrafo(&Grafo, n_cidades);
 
-    printf("\nCidade Central: %d", Floydinho(&Grafo));
+    printf("\nCidade Central: %d\n", Floydinho(&Grafo));
+
+    Dijkstra(&Grafo);
+
     return 0;
 }
